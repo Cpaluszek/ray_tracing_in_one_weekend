@@ -21,8 +21,8 @@ set ( EXTERNAL
 
 set ( SOURCE_ONE_WEEKEND
   # src/external/stb_image.h
-  #
-  # src/InOneWeekend/camera.h
+
+  src/InOneWeekend/camera.h
   src/InOneWeekend/color.h
   src/InOneWeekend/hittable.h
   src/InOneWeekend/hittable_list.h
