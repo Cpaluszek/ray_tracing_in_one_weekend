@@ -9,6 +9,8 @@ int main() {
     world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
     world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
 
+    world.add(make_shared<sphere>(point3(1, 0, -2), 1.0));
+
     // Camera
     camera cam;
 
