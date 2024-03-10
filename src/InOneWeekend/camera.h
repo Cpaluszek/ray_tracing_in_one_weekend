@@ -19,6 +19,9 @@ public:
     point3 lookat = point3(0, 0, 0);
     vec3 vup = vec3(0, 1, 0);
 
+    double defocus_angle = 0;         // Variation angle of rays through each pixel
+    double focus_dist = 10;         // Distance from camera lookfrom point to plane of perfect focus
+
     void render(const hittable& world) {
         initialize();
 
@@ -45,7 +48,9 @@ private:
     point3 pixel00_loc;
     vec3 pixel_delta_u;
     vec3 pixel_delta_v;
-    vec3 u, v, w;       // Camera frame vectors
+    vec3 u, v, w;           // Camera frame vectors
+    vec3 defocus_disk_u;    // Defocus disk horizontal radius
+    vec3 defocus_disk_v;    // Defocus disk vertical radius
 
     void initialize() {
         image_height = static_cast<int>(image_width / aspect_ratio);
@@ -54,10 +59,9 @@ private:
         center = lookfrom;
 
         // Viewport dimensions
-        auto focal_length = (lookfrom - lookat).length();
         auto theta = degrees_to_radians(vfov);
         auto h = tan(theta / 2);
-        auto viewport_height = 2 * h * focal_length;
+        auto viewport_height = 2 * h * focus_dist;
         auto viewport_width = viewport_height * (static_cast<double>(image_width)/image_height);
 
         // Camera coordinate frame
@@ -73,8 +77,13 @@ private:
         pixel_delta_v = viewport_v / image_height;
 
         // Viewport location
-        point3 viewport_upper_left = center - (focal_length * w) - viewport_u/2 - viewport_v / 2;
+        point3 viewport_upper_left = center - (focus_dist * w) - viewport_u/2 - viewport_v / 2;
         pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+
+        // Calculate the camera defocus disk
+        auto defocus_radius = focus_dist * tan(degrees_to_radians(defocus_angle / 2));
+        defocus_disk_u = u * defocus_radius;
+        defocus_disk_v = v * defocus_radius;
     }
 
     ray get_ray(int i, int j) const {
